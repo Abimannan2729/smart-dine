@@ -20,6 +20,6 @@
     }
   ],
   "env": {
-    "VITE_API_URL": "https://your-backend-url.com"
+    "REACT_APP_API_URL": "https://smart-dine-backend-1eyi.onrender.com/api"
   }
 }
