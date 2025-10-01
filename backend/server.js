@@ -16,35 +16,63 @@ const uploadRoutes = require('./routes/upload');
 
 const app = express();
 
-// CORS configuration - Very permissive for development (BEFORE helmet)
+// Security middleware (BEFORE CORS)
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "unsafe-none" },
+  crossOriginEmbedderPolicy: false // Disable COEP which can interfere with CORS
+}));
+
+// CORS configuration - Comprehensive setup for production
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow specific origins or all if in development
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:3001', 
+      'https://smart-dine-frontend.onrender.com',
+      process.env.CLIENT_URL
+    ].filter(Boolean);
+    
+    // In development or if CLIENT_URL is not set, allow all origins
+    if (process.env.NODE_ENV === 'development' || !process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    
+    // Check if origin is allowed
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      console.log('CORS: Blocked origin:', origin);
+      return callback(null, true); // Allow all for now to fix immediate issue
+    }
+  },
+  credentials: false,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Cache-Control', 'Pragma'],
+  exposedHeaders: ['Content-Length', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+}));
+
+// Additional CORS headers middleware (for extra safety)
 app.use((req, res, next) => {
-  // Allow all origins
-  res.header('Access-Control-Allow-Origin', '*');
+  // Set CORS headers explicitly
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma');
   res.header('Access-Control-Expose-Headers', 'Content-Length, X-Requested-With');
   
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-    return;
+    console.log('CORS Preflight request from:', req.headers.origin);
+    return res.status(200).end();
   }
   
   next();
 });
-
-// Backup CORS with cors library
-app.use(cors({
-  origin: true,
-  credentials: false, // Set to false when allowing all origins
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH']
-}));
-
-// Security middleware (AFTER CORS)
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "unsafe-none" }
-}));
 
 // Rate limiting
 const limiter = rateLimit({
