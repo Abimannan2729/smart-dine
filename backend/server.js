@@ -106,12 +106,13 @@ mongoose.connect(process.env.MONGODB_URI, {
   process.exit(1);
 });
 
-// Health check route
-app.get('/health', (req, res) => {
+// Health check route for Render
+app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'OK',
     message: 'Smart Dine API is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
 });
 
