@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Circle -->
+  <circle cx="8" cy="8" r="7.5" fill="#8B4513" stroke="#8B4513" stroke-width="0.5"/>
+  <!-- Inner Circle -->
+  <circle cx="8" cy="8" r="6.5" fill="#F5F5DC"/>
+  <!-- Central Pot (simplified) -->
+  <ellipse cx="8" cy="8.5" rx="2" ry="1.2" fill="#8B4513"/>
+  <ellipse cx="8" cy="7.5" rx="2.4" ry="0.8" fill="#8B4513"/>
+  <!-- Small handle -->
+  <ellipse cx="8" cy="7" rx="0.3" ry="0.2" fill="#8B4513"/>
+  <!-- Steam -->
+  <path d="M 7,6 Q 7,5 7.5,5.5 Q 8,4.5 8.5,5.5 Q 9,5 9,6" stroke="#8B4513" stroke-width="0.3" fill="none" opacity="0.8"/>
+</svg>
