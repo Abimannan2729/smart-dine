@@ -13,7 +13,6 @@ const menuRoutes = require('./routes/menu');
 const restaurantRoutes = require('./routes/restaurant');
 const qrRoutes = require('./routes/qr');
 const uploadRoutes = require('./routes/upload');
-const debugRoutes = require('./debug-endpoint');
 
 const app = express();
 
@@ -146,7 +145,6 @@ app.get('/api/health', (req, res) => {
 });
 
 // Routes
-app.use('/api/debug', debugRoutes); // Temporary debug routes
 app.use('/api/auth', authRoutes);
 app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/menus', menuRoutes);

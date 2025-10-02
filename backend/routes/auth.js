@@ -11,39 +11,66 @@ const router = express.Router();
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
+    console.log('🚀 REGISTER: Starting registration process');
+    console.log('📊 ENV CHECK:', {
+      hasJwtSecret: !!process.env.JWT_SECRET,
+      jwtSecretLength: process.env.JWT_SECRET ? process.env.JWT_SECRET.length : 0,
+      hasJwtExpire: !!process.env.JWT_EXPIRE,
+      jwtExpire: process.env.JWT_EXPIRE,
+      nodeEnv: process.env.NODE_ENV
+    });
+    
     const { name, email, password, phone } = req.body;
+    console.log('📝 REGISTER: Request data received:', { name, email, phone, hasPassword: !!password });
 
     // Check if user already exists
+    console.log('🔍 REGISTER: Checking for existing user...');
     const existingUser = await User.findOne({ email });
     if (existingUser) {
+      console.log('❌ REGISTER: User already exists');
       return res.status(400).json({
         success: false,
         message: 'User already exists with this email address'
       });
     }
+    console.log('✅ REGISTER: No existing user found');
 
     // Create user
+    console.log('👤 REGISTER: Creating new user...');
     const user = await User.create({
       name,
       email,
       password,
       phone
     });
+    console.log('✅ REGISTER: User created successfully:', user._id);
 
     // Generate email verification token
-    const verifyToken = user.createEmailVerificationToken();
-    await user.save({ validateBeforeSave: false });
+    console.log('🔐 REGISTER: Generating email verification token...');
+    try {
+      const verifyToken = user.createEmailVerificationToken();
+      console.log('✅ REGISTER: Email verification token created');
+      await user.save({ validateBeforeSave: false });
+      console.log('✅ REGISTER: User saved with verification token');
+    } catch (tokenError) {
+      console.error('❌ REGISTER: Error creating verification token:', tokenError);
+      throw tokenError;
+    }
 
     // TODO: Send verification email
     // For now, we'll auto-verify for development
     if (process.env.NODE_ENV === 'development') {
+      console.log('🚪 REGISTER: Auto-verifying user in development...');
       user.isEmailVerified = true;
       user.emailVerificationToken = undefined;
       user.emailVerificationExpires = undefined;
       await user.save({ validateBeforeSave: false });
+      console.log('✅ REGISTER: User auto-verified');
     }
 
+    console.log('🏆 REGISTER: Creating and sending JWT token...');
     createSendToken(user, 201, res);
+    console.log('✅ REGISTER: Registration complete!');
   } catch (error) {
     console.error('Registration error:', error);
 
