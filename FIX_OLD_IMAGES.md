@@ -6,20 +6,21 @@ Your new uploads work perfectly, but old images in the database still have `loca
 
 ## 🚀 **How to Run the Fix**
 
-### **Option 1: Run Locally (If you have the project locally)**
-```bash
-cd backend
-node fix-image-urls.js
-```
-
-### **Option 2: Run on Render (Recommended)**
+### **⭐ RECOMMENDED: Run on Render**
 1. Go to your **smart-dine-backend-1eyi** service in Render
-2. Go to **Shell** tab
-3. Run these commands:
+2. Click the **Shell** tab
+3. Run this command:
    ```bash
-   cd /opt/render/project/src/backend
    node fix-image-urls.js
    ```
+
+### **Alternative: Run Locally (Only if you have MongoDB access)**
+```bash
+cd backend
+# Set your MongoDB connection string
+export MONGODB_URI="your-production-mongodb-connection-string"
+node fix-image-urls.js
+```
 
 ## 📋 **What the Script Does**
 
