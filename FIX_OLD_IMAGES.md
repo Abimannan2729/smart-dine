@@ -2,24 +2,27 @@
 
 ## 🎯 **What This Fixes**
 
-Your new uploads work perfectly, but old images in the database still have `localhost:5000` URLs. This script updates them to use your deployed backend URL.
+Your new uploads work perfectly, but old images in the database still have `localhost:5000` URLs. This updates them to use your deployed backend URL.
 
 ## 🚀 **How to Run the Fix**
 
-### **⭐ RECOMMENDED: Run on Render**
-1. Go to your **smart-dine-backend-1eyi** service in Render
-2. Click the **Shell** tab
-3. Run this command:
-   ```bash
-   node fix-image-urls.js
-   ```
+### **⭐ SUPER EASY: Use the Web Interface**
+1. **Open the file:** `FIX_IMAGES_EASY.html` in your browser
+2. **Click the button:** "Fix Image URLs Now"
+3. **Wait for success:** The page will show you the results
+4. **Done!** All your old images are now fixed
 
-### **Alternative: Run Locally (Only if you have MongoDB access)**
+### **Alternative: API Call**
+If you prefer using an API tool like Postman:
+```
+POST https://smart-dine-backend-1eyi.onrender.com/api/admin/fix-image-urls
+Content-Type: application/json
+```
+
+### **Alternative: Command Line (Advanced)**
 ```bash
-cd backend
-# Set your MongoDB connection string
-export MONGODB_URI="your-production-mongodb-connection-string"
-node fix-image-urls.js
+curl -X POST https://smart-dine-backend-1eyi.onrender.com/api/admin/fix-image-urls \
+  -H "Content-Type: application/json"
 ```
 
 ## 📋 **What the Script Does**

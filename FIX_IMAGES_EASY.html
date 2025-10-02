@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Dine - Fix Image URLs</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .status.info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+        }
+        .status.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        .fix-button {
+            display: block;
+            width: 100%;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        .fix-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        .fix-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .results {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Smart Dine Image URL Fix</h1>
+        
+        <div class="status info">
+            <span class="emoji">ℹ️</span>
+            <strong>What this does:</strong> Updates old localhost:5000 image URLs in your database to use your deployed backend URL.
+        </div>
+
+        <div class="status info">
+            <span class="emoji">🎯</span>
+            <strong>Status:</strong> New uploads are working correctly. This fixes old images stored in the database.
+        </div>
+
+        <button class="fix-button" onclick="fixImageUrls()">
+            🚀 Fix Image URLs Now
+        </button>
+
+        <div id="status"></div>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://smart-dine-backend-1eyi.onrender.com/api';
+        
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function showResults(data) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `<div class="results">${data}</div>`;
+        }
+
+        async function fixImageUrls() {
+            const button = document.querySelector('.fix-button');
+            button.disabled = true;
+            button.textContent = '🔄 Fixing URLs...';
+            
+            showStatus('🔄 Connecting to your backend and fixing image URLs...', 'info');
+            showResults('');
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/fix-image-urls`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('✅ Image URLs fixed successfully!', 'success');
+                    
+                    const results = `🎉 SUCCESS! Database URLs Updated
+
+📊 SUMMARY:
+• Restaurants found: ${data.results.restaurantsFound}
+• Restaurants fixed: ${data.results.restaurantsFixed}
+• Menu items found: ${data.results.menuItemsFound}
+• Menu items fixed: ${data.results.menuItemsFixed}
+
+🔄 CHANGES MADE:
+• Old URL: ${data.results.oldUrl}
+• New URL: ${data.results.newUrl}
+
+✅ NEXT STEPS:
+1. Refresh your restaurant dashboard
+2. All images should now load correctly
+3. No more localhost:5000 errors!
+
+🎯 Your deployment image upload issue is now 100% SOLVED!`;
+
+                    showResults(results);
+                    button.textContent = '✅ Fixed Successfully!';
+                    button.style.background = 'linear-gradient(45deg, #10b981, #059669)';
+                } else {
+                    throw new Error(data.message || 'Unknown error occurred');
+                }
+            } catch (error) {
+                console.error('Fix error:', error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+                showResults(`Error details: ${error.message}\n\nPlease try again or contact support.`);
+                
+                button.disabled = false;
+                button.textContent = '🔄 Try Again';
+            }
+        }
+
+        // Test connection on page load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_BASE}/admin/health`);
+                const data = await response.json();
+                if (data.success) {
+                    showStatus('🟢 Connected to backend successfully. Ready to fix image URLs!', 'success');
+                }
+            } catch (error) {
+                showStatus('🔴 Cannot connect to backend. Please check if your backend is running.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -13,6 +13,7 @@ const menuRoutes = require('./routes/menu');
 const restaurantRoutes = require('./routes/restaurant');
 const qrRoutes = require('./routes/qr');
 const uploadRoutes = require('./routes/upload');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 
@@ -151,6 +152,7 @@ app.use('/api/restaurants', restaurantRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/qr', qrRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/admin', adminRoutes);
 
 // 404 handler for unmatched routes
 app.use((req, res, next) => {
