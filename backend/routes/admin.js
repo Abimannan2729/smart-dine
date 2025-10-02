@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Restaurant = require('../models/Restaurant');
 const MenuItem = require('../models/MenuItem');
+const User = require('../models/User');
 
 const OLD_URL = 'http://localhost:5000';
 const NEW_URL = 'http://smart-dine-backend-1eyi.onrender.com';
@@ -117,6 +118,76 @@ router.post('/fix-image-urls', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fixing image URLs',
+      error: error.message
+    });
+  }
+});
+
+// @desc    Fix user email verification (temporary endpoint)
+// @route   POST /api/admin/fix-user-verification
+// @access  Public (temporary - should be removed after use)
+router.post('/fix-user-verification', async (req, res) => {
+  try {
+    console.log('🔧 ADMIN: Starting user verification fix...');
+
+    // Find all users who are not email verified
+    const unverifiedUsers = await User.find({ 
+      isEmailVerified: { $ne: true } 
+    });
+
+    console.log(`Found ${unverifiedUsers.length} unverified users`);
+
+    if (unverifiedUsers.length === 0) {
+      return res.status(200).json({
+        success: true,
+        message: 'All users are already verified!',
+        data: {
+          fixedCount: 0,
+          totalUsers: await User.countDocuments()
+        }
+      });
+    }
+
+    // Fix each user
+    let fixedCount = 0;
+    const fixedUsers = [];
+
+    for (const user of unverifiedUsers) {
+      console.log(`📧 Fixing user: ${user.email}`);
+      
+      // Auto-verify the user
+      user.isEmailVerified = true;
+      user.emailVerificationToken = undefined;
+      user.emailVerificationExpires = undefined;
+      
+      await user.save({ validateBeforeSave: false });
+      console.log(`✅ Verified user: ${user.name} (${user.email})`);
+      
+      fixedUsers.push({
+        id: user._id,
+        name: user.name,
+        email: user.email
+      });
+      fixedCount++;
+    }
+
+    console.log('🎉 User verification fix completed successfully!');
+
+    res.status(200).json({
+      success: true,
+      message: 'User verification fix completed successfully!',
+      data: {
+        fixedCount,
+        fixedUsers,
+        totalUsers: await User.countDocuments()
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error fixing user verification:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fixing user verification',
       error: error.message
     });
   }

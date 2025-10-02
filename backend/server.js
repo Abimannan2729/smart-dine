@@ -15,6 +15,9 @@ const qrRoutes = require('./routes/qr');
 const uploadRoutes = require('./routes/upload');
 const adminRoutes = require('./routes/admin');
 
+// Import auto-fix utility
+const { autoFixUserVerification } = require('./utils/autoFixUsers');
+
 const app = express();
 
 // Security middleware (BEFORE CORS)
@@ -155,9 +158,12 @@ mongoose.connect(process.env.MONGODB_URI, {
   maxPoolSize: 10, // Maintain up to 10 socket connections
   heartbeatFrequencyMS: 10000, // Send heartbeat every 10 seconds
 })
-.then(() => {
+.then(async () => {
   console.log('✅ Connected to MongoDB Atlas');
   console.log('🌐 Database:', process.env.MONGODB_URI.split('/')[3].split('?')[0]);
+  
+  // Auto-fix user verification on startup
+  await autoFixUserVerification();
 })
 .catch((err) => {
   console.error('❌ MongoDB Atlas connection error:', err.message);
