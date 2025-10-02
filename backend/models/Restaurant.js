@@ -134,8 +134,8 @@ const restaurantSchema = new mongoose.Schema({
     },
     layout: {
       type: String,
-      enum: ['classic', 'modern', 'minimal'],
-      default: 'modern'
+      enum: ['grid', 'list', 'card'],
+      default: 'grid'
     }
   },
   qrCode: {
