@@ -20,6 +20,12 @@ services:
         generateValue: true
       - key: CLIENT_URL
         value: https://smart-dine-frontend.onrender.com
+      - key: CLOUDINARY_CLOUD_NAME
+        value: your-cloudinary-cloud-name
+      - key: CLOUDINARY_API_KEY
+        value: your-cloudinary-api-key
+      - key: CLOUDINARY_API_SECRET
+        value: your-cloudinary-api-secret
     
   # Frontend Static Site
   - type: web

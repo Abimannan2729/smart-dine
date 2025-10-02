@@ -7,6 +7,7 @@ This guide covers multiple deployment options for the Smart Dine restaurant mana
 - **Frontend**: React + Vite + Tailwind CSS
 - **Backend**: Node.js + Express + MongoDB
 - **Database**: MongoDB
+- **Image Storage**: Cloudinary (for persistent image uploads)
 - **Styling**: Tailwind CSS with red/gold/white theme and glassmorphism effects
 
 ## 🚀 Deployment Options
@@ -176,6 +177,11 @@ JWT_SECRET=your-super-secret-jwt-key-min-32-chars
 CORS_ORIGIN=http://localhost:5173
 UPLOAD_DIR=uploads
 MAX_FILE_SIZE=5242880
+
+# Cloudinary Configuration (Required for image uploads)
+CLOUDINARY_CLOUD_NAME=your-cloudinary-cloud-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 ```
 
 ### Frontend (.env)
@@ -184,6 +190,36 @@ VITE_API_URL=http://localhost:5000
 VITE_APP_NAME=Smart Dine
 VITE_UPLOAD_MAX_SIZE=5242880
 ```
+
+## ☁️ Cloudinary Setup (Required for Image Uploads)
+
+Smart Dine uses Cloudinary for persistent image storage, which is essential for deployment platforms with ephemeral filesystems (like Render, Heroku, etc.).
+
+### 1. Create Cloudinary Account
+1. Go to [Cloudinary](https://cloudinary.com/) and create a free account
+2. Navigate to your Dashboard
+3. Copy your Cloud Name, API Key, and API Secret
+
+### 2. Configure Environment Variables
+Add these to your deployment platform's environment variables:
+```
+CLOUDINARY_CLOUD_NAME=your-actual-cloud-name
+CLOUDINARY_API_KEY=your-actual-api-key
+CLOUDINARY_API_SECRET=your-actual-api-secret
+```
+
+### 3. Image Upload Features
+- **Restaurant logos** - Stored in `logos/` folder
+- **Cover images** - Stored in `covers/` folder  
+- **Menu item images** - Stored in `menu-items/` folder
+- **Category images** - Stored in `categories/` folder
+- **Other uploads** - Stored in `misc/` folder
+
+### 4. Automatic Features
+- **Auto-optimization** - Images are automatically optimized for web
+- **Multiple formats** - Supports JPEG, PNG, WebP
+- **Responsive delivery** - Automatic format and quality selection
+- **CDN delivery** - Fast global content delivery
 
 ## 🔒 Security Checklist
 
