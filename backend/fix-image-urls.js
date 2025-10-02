@@ -7,7 +7,7 @@ const MenuItem = require('./models/MenuItem');
 
 const MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/smartdine';
 const OLD_URL = 'http://localhost:5000';
-const NEW_URL = 'http://smart-dine-backend-1eyi.onrender.com';
+const NEW_URL = 'https://smart-dine-backend-1eyi.onrender.com';
 
 async function fixImageUrls() {
   try {
