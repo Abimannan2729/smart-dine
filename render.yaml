@@ -34,7 +34,7 @@ services:
     name: smart-dine-frontend
     runtime: static
     plan: free
-    buildCommand: cd frontend && npm install && REACT_APP_API_URL=https://smart-dine-backend.onrender.com/api npm run build
+    buildCommand: cd frontend && npm install && REACT_APP_API_URL=https://smart-dine-backend-1eyi.onrender.com/api npm run build
     staticPublishPath: frontend/build
     routes:
       - type: rewrite
@@ -42,7 +42,7 @@ services:
         destination: /index.html
     envVars:
       - key: REACT_APP_API_URL
-        value: https://smart-dine-backend.onrender.com/api
+        value: https://smart-dine-backend-1eyi.onrender.com/api
       - key: NODE_ENV
         value: production
 
