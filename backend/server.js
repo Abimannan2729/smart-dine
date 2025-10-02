@@ -182,7 +182,7 @@ app.get('/api/health', (req, res) => {
     message: 'Smart Dine API is running',
     timestamp: new Date().toISOString(),
     database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    version: '1.1.0' // Added to force redeploy
+    version: '1.2.0' // Force redeploy with user verification fix
   });
 });
 
