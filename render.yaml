@@ -20,12 +20,14 @@ services:
         generateValue: true
       - key: CLIENT_URL
         value: https://smart-dine-frontend.onrender.com
+      # IMPORTANT: Replace these with your actual Cloudinary credentials
+      # Get them from: https://cloudinary.com/console
       - key: CLOUDINARY_CLOUD_NAME
-        value: your-cloudinary-cloud-name
+        value: REPLACE_WITH_YOUR_ACTUAL_CLOUD_NAME
       - key: CLOUDINARY_API_KEY
-        value: your-cloudinary-api-key
+        value: REPLACE_WITH_YOUR_ACTUAL_API_KEY
       - key: CLOUDINARY_API_SECRET
-        value: your-cloudinary-api-secret
+        value: REPLACE_WITH_YOUR_ACTUAL_API_SECRET
     
   # Frontend Static Site
   - type: web
