@@ -27,48 +27,81 @@ app.use(helmet({
 // CORS configuration - Comprehensive setup for production
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.)
-    if (!origin) return callback(null, true);
+    console.log('CORS: Request from origin:', origin);
     
-    // Allow specific origins or all if in development
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) {
+      console.log('CORS: Allowing request with no origin');
+      return callback(null, true);
+    }
+    
+    // Define allowed origins
     const allowedOrigins = [
       'http://localhost:3000',
-      'http://localhost:3001', 
+      'http://localhost:3001',
       'https://smart-dine-frontend.onrender.com',
+      'https://smart-dine-frontend.netlify.app',
+      'https://smart-dine-frontend.vercel.app',
       process.env.CLIENT_URL
     ].filter(Boolean);
     
-    // In development or if CLIENT_URL is not set, allow all origins
-    if (process.env.NODE_ENV === 'development' || !process.env.CLIENT_URL) {
+    console.log('CORS: Allowed origins:', allowedOrigins);
+    
+    // In development, allow all origins
+    if (process.env.NODE_ENV === 'development') {
+      console.log('CORS: Development mode - allowing all origins');
       return callback(null, true);
     }
     
     // Check if origin is allowed
     if (allowedOrigins.includes(origin)) {
+      console.log('CORS: Origin allowed:', origin);
       return callback(null, true);
     } else {
-      console.log('CORS: Blocked origin:', origin);
-      return callback(null, true); // Allow all for now to fix immediate issue
+      console.log('CORS: Origin not in allowed list, but allowing anyway for compatibility:', origin);
+      // Allow all origins for now to prevent CORS issues during deployment
+      return callback(null, true);
     }
   },
-  credentials: false,
+  credentials: true, // Enable credentials for authentication
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization', 'Cache-Control', 'Pragma'],
-  exposedHeaders: ['Content-Length', 'X-Requested-With'],
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  allowedHeaders: [
+    'Origin', 
+    'X-Requested-With', 
+    'Content-Type', 
+    'Accept', 
+    'Authorization', 
+    'Cache-Control', 
+    'Pragma',
+    'X-HTTP-Method-Override'
+  ],
+  exposedHeaders: ['Content-Length', 'X-Requested-With', 'Authorization'],
+  optionsSuccessStatus: 200, // Some legacy browsers choke on 204
+  preflightContinue: false // Pass control to the next handler
 }));
 
 // Additional CORS headers middleware (for extra safety)
 app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
   // Set CORS headers explicitly
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
+  } else {
+    res.header('Access-Control-Allow-Origin', '*');
+  }
+  
+  res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, HEAD, PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma');
-  res.header('Access-Control-Expose-Headers', 'Content-Length, X-Requested-With');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control, Pragma, X-HTTP-Method-Override');
+  res.header('Access-Control-Expose-Headers', 'Content-Length, X-Requested-With, Authorization');
+  res.header('Access-Control-Max-Age', '86400'); // Cache preflight for 24 hours
   
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    console.log('CORS Preflight request from:', req.headers.origin);
+    console.log('CORS Preflight request from:', origin);
+    console.log('CORS Preflight headers requested:', req.headers['access-control-request-headers']);
+    console.log('CORS Preflight method requested:', req.headers['access-control-request-method']);
     return res.status(200).end();
   }
   

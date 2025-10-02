@@ -9,6 +9,7 @@ console.log('API Base URL:', BASE_URL);
 const api = axios.create({
   baseURL: BASE_URL,
   timeout: 30000, // Increased to 30 seconds for FormData uploads
+  withCredentials: true, // Enable credentials for CORS
   headers: {
     'Content-Type': 'application/json',
   },
