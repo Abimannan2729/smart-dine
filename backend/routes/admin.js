@@ -6,6 +6,11 @@ const MenuItem = require('../models/MenuItem');
 const OLD_URL = 'http://localhost:5000';
 const NEW_URL = 'http://smart-dine-backend-1eyi.onrender.com';
 
+// Health check for admin routes
+router.get('/health', (req, res) => {
+  res.json({ success: true, message: 'Admin routes are working' });
+});
+
 // Admin endpoint to fix image URLs in database
 router.post('/fix-image-urls', async (req, res) => {
   try {
