@@ -167,7 +167,7 @@ exports.checkRestaurantOwnership = async (req, res, next) => {
 // Generate JWT token
 exports.signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE
+    expiresIn: process.env.JWT_EXPIRE || '7d'
   });
 };
 
