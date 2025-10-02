@@ -77,7 +77,22 @@ export const authService = {
   isAuthenticated: (): boolean => {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    return !!(token && user);
+    
+    // Check for valid token and user
+    const hasValidToken = token && token !== 'undefined' && token !== 'null';
+    const hasValidUser = user && user !== 'undefined' && user !== 'null';
+    
+    // Clean up invalid data
+    if (!hasValidToken || !hasValidUser) {
+      if (token === 'undefined' || token === 'null' || user === 'undefined' || user === 'null') {
+        console.log('AuthService: Cleaning up invalid auth data');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+      return false;
+    }
+    
+    return true;
   },
 
   // Get stored token
@@ -89,6 +104,17 @@ export const authService = {
       tokenValue: token,
       tokenLength: token ? token.length : 0
     });
+    
+    // Return null for invalid tokens
+    if (!token || token === 'undefined' || token === 'null') {
+      if (token === 'undefined' || token === 'null') {
+        console.log('AuthService: Cleaning up invalid token from localStorage');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+      return null;
+    }
+    
     return token;
   },
 
@@ -108,6 +134,17 @@ export const authService = {
       tokenValue: token,
       tokenLength: token ? token.length : 0
     });
+    
+    // Validate inputs before storing
+    if (!token || token === 'undefined' || token === 'null' || typeof token !== 'string') {
+      console.error('AuthService: Invalid token provided to setAuthData:', token);
+      throw new Error('Invalid token provided');
+    }
+    
+    if (!user || typeof user !== 'object') {
+      console.error('AuthService: Invalid user provided to setAuthData:', user);
+      throw new Error('Invalid user provided');
+    }
     
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));

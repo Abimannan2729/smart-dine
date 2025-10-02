@@ -29,12 +29,19 @@ api.interceptors.request.use(
       isFormData: config.data instanceof FormData
     });
     
-    if (token) {
+    // Check for valid token (not null, not undefined, not the string "undefined")
+    if (token && token !== 'undefined' && token !== 'null') {
       const authHeader = `Bearer ${token}`;
       console.log('Setting Authorization header:', authHeader.substring(0, 30) + '...');
       config.headers.Authorization = authHeader;
     } else {
-      console.log('No token found, not setting Authorization header');
+      console.log('No valid token found, not setting Authorization header');
+      // Clean up invalid tokens from localStorage
+      if (token === 'undefined' || token === 'null') {
+        console.log('Cleaning up invalid token from localStorage');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
     
     // Handle FormData uploads - remove Content-Type to let browser set boundary
