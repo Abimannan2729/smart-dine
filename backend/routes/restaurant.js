@@ -1,6 +1,6 @@
 const express = require('express');
 const { protect, checkRestaurantOwnership } = require('../middleware/auth');
-const { uploadFields } = require('../middleware/upload');
+const { uploadFields } = require('../middleware/cloudinary');
 const Restaurant = require('../models/Restaurant');
 const Category = require('../models/Category');
 const MenuItem = require('../models/MenuItem');
@@ -117,7 +117,7 @@ router.post('/', protect, uploadFields([
   { name: 'coverImage', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { getFileUrl } = require('../middleware/upload');
+    const { getFileUrl } = require('../middleware/cloudinary');
     
     const restaurantData = {
       ...req.body,
@@ -191,7 +191,7 @@ router.put('/:id', protect, checkRestaurantOwnership, uploadFields([
   { name: 'coverImage', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { getFileUrl, deleteFile } = require('../middleware/upload');
+    const { getFileUrl, deleteFile } = require('../middleware/cloudinary');
     
     const updateData = { ...req.body };
 

@@ -42,7 +42,7 @@ router.get('/restaurants/:restaurantId/categories', protect, checkRestaurantOwne
 // @access  Private
 router.post('/restaurants/:restaurantId/categories', protect, checkRestaurantOwnership, uploadSingle('image'), async (req, res) => {
   try {
-    const { getFileUrl } = require('../middleware/upload');
+    const { getFileUrl } = require('../middleware/cloudinary');
     
     const categoryData = {
       ...req.body,
@@ -110,7 +110,7 @@ router.put('/categories/:id', protect, uploadSingle('image'), async (req, res) =
       });
     }
 
-    const { getFileUrl, deleteFile } = require('../middleware/upload');
+    const { getFileUrl, deleteFile } = require('../middleware/cloudinary');
     const updateData = { ...req.body };
 
     if (req.file) {
@@ -310,7 +310,7 @@ router.get('/items/:id', protect, async (req, res) => {
 // @access  Private
 router.post('/restaurants/:restaurantId/items', protect, checkRestaurantOwnership, uploadMultiple('images', 5), async (req, res) => {
   try {
-    const { getFileUrl } = require('../middleware/upload');
+    const { getFileUrl } = require('../middleware/cloudinary');
     
     console.log('Backend createMenuItem: req.body:', req.body);
     console.log('Backend createMenuItem: req.files:', req.files);
@@ -427,7 +427,7 @@ router.put('/items/:id', protect, uploadMultiple('images', 5), async (req, res) 
       });
     }
 
-    const { getFileUrl, deleteFile } = require('../middleware/upload');
+    const { getFileUrl, deleteFile } = require('../middleware/cloudinary');
     const updateData = { ...req.body };
 
     // Handle image uploads

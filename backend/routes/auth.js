@@ -189,7 +189,7 @@ router.put('/profile', protect, uploadSingle('avatar'), async (req, res) => {
     if (name) updateFields.name = name;
     if (phone) updateFields.phone = phone;
     if (req.file) {
-      const { getFileUrl, deleteFile } = require('../middleware/upload');
+      const { getFileUrl, deleteFile } = require('../middleware/cloudinary');
       
       // Delete old avatar if exists
       if (req.user.avatar) {
