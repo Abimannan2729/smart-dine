@@ -42,6 +42,24 @@ const PublicMenu: React.FC = () => {
   const [menu, setMenu] = useState<Menu | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Debug menu state changes
+  useEffect(() => {
+    console.log('PublicMenu: Menu state changed:', {
+      menu: menu ? {
+        _id: menu._id,
+        name: menu.name,
+        categoriesCount: menu.categories?.length || 0,
+        categories: menu.categories?.map(cat => ({
+          _id: cat._id,
+          name: cat.name,
+          itemsCount: cat.items?.length || 0
+        })) || []
+      } : null,
+      loading,
+      error
+    });
+  }, [menu, loading, error]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -71,11 +89,13 @@ const PublicMenu: React.FC = () => {
         console.log('PublicMenu: Loading demo menu data for slug:', slugOrId);
         try {
           const menuData = await menuService.getPublicMenu('demo');
+          console.log('PublicMenu: Backend demo menu data:', menuData);
           setMenu(menuData);
           setLoading(false);
           return;
         } catch (error) {
-          console.log('PublicMenu: Backend demo failed, using static data');
+          console.log('PublicMenu: Backend demo failed, using static data:', error);
+          console.log('PublicMenu: Static demo menu data:', demoMenu);
           setMenu(demoMenu);
           setLoading(false);
           return;
@@ -621,9 +641,11 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({
   categories,
   onCategorySelect,
 }) => {
+  console.log('CategoriesGrid: Received categories:', categories);
   const activeCategories = categories.filter(cat => 
     cat.isActive && cat.items && cat.items.some(item => item.isAvailable)
   );
+  console.log('CategoriesGrid: Active categories:', activeCategories);
 
   if (activeCategories.length === 0) {
     return (

@@ -48,7 +48,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'appetizers',
     image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegetarian')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegetarian') || { id: 'vegetarian', name: 'Vegetarian', icon: '🥬', color: 'green' }],
     preparationTime: 15,
     calories: 320,
     isPopular: true,
@@ -64,7 +64,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'appetizers',
     image: 'https://images.unsplash.com/photo-1559847844-d445cb8d6810?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' }],
     preparationTime: 20,
     calories: 280,
     isFeatured: true,
@@ -81,8 +81,8 @@ const demoMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=300&h=200&fit=crop',
     isAvailable: true,
     dietaryTags: [
-      DIETARY_TAGS.find(tag => tag.id === 'vegetarian')!,
-      DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!
+      DIETARY_TAGS.find(tag => tag.id === 'vegetarian') || { id: 'vegetarian', name: 'Vegetarian', icon: '🥬', color: 'green' },
+      DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' }
     ],
     preparationTime: 10,
     calories: 250,
@@ -101,7 +101,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'mains',
     image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' }],
     preparationTime: 25,
     calories: 650,
     isPopular: true,
@@ -119,7 +119,7 @@ const demoMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=300&h=200&fit=crop',
     isAvailable: true,
     dietaryTags: [
-      DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!,
+      DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' },
       DIETARY_TAGS.find(tag => tag.id === 'high-protein')!
     ],
     preparationTime: 18,
@@ -136,7 +136,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'mains',
     image: 'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' }],
     preparationTime: 30,
     calories: 580,
     isPopular: true,
@@ -154,7 +154,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'desserts',
     image: 'https://images.unsplash.com/photo-1541783245831-57d6fb0926d3?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegetarian')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegetarian') || { id: 'vegetarian', name: 'Vegetarian', icon: '🥬', color: 'green' }],
     preparationTime: 12,
     calories: 450,
     isPopular: true,
@@ -170,7 +170,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'desserts',
     image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegetarian')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegetarian') || { id: 'vegetarian', name: 'Vegetarian', icon: '🥬', color: 'green' }],
     preparationTime: 5,
     calories: 380,
     ingredients: ['Mascarpone', 'Ladyfingers', 'Espresso', 'Cocoa powder', 'Sugar'],
@@ -187,7 +187,7 @@ const demoMenuItems: MenuItem[] = [
     category: 'beverages',
     image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=200&fit=crop',
     isAvailable: true,
-    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegan')!],
+    dietaryTags: [DIETARY_TAGS.find(tag => tag.id === 'vegan') || { id: 'vegan', name: 'Vegan', icon: '🌱', color: 'green' }],
     ingredients: ['Various local craft beers'],
     allergens: ['Gluten'],
     sortOrder: 1
@@ -201,8 +201,8 @@ const demoMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=300&h=200&fit=crop',
     isAvailable: true,
     dietaryTags: [
-      DIETARY_TAGS.find(tag => tag.id === 'vegan')!,
-      DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!
+      DIETARY_TAGS.find(tag => tag.id === 'vegan') || { id: 'vegan', name: 'Vegan', icon: '🌱', color: 'green' },
+      DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' }
     ],
     ingredients: ['Premium wine selection'],
     allergens: ['Sulfites'],
@@ -217,8 +217,8 @@ const demoMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=300&h=200&fit=crop',
     isAvailable: true,
     dietaryTags: [
-      DIETARY_TAGS.find(tag => tag.id === 'vegan')!,
-      DIETARY_TAGS.find(tag => tag.id === 'gluten-free')!
+      DIETARY_TAGS.find(tag => tag.id === 'vegan') || { id: 'vegan', name: 'Vegan', icon: '🌱', color: 'green' },
+      DIETARY_TAGS.find(tag => tag.id === 'gluten-free') || { id: 'gluten-free', name: 'Gluten Free', icon: '🌾', color: 'amber' }
     ],
     ingredients: ['Single-origin coffee beans'],
     allergens: [],
