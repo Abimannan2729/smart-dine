@@ -288,13 +288,22 @@ class MenuService {
   }
 
   // Public menu access (no auth required)
-  async getPublicMenu(restaurantId: string): Promise<Menu> {
-    if (restaurantId === 'demo') {
+  async getPublicMenu(restaurantIdOrSlug: string): Promise<Menu> {
+    if (restaurantIdOrSlug === 'demo') {
       const response = await api.get<{ success: boolean; data: Menu }>(`/menus/public/demo`);
       return response.data.data;
     }
-    const response = await api.get<{ success: boolean; data: Menu }>(`/menus/public/restaurant/${restaurantId}`);
-    return response.data.data;
+    
+    // Try restaurant ID first (most common case)
+    try {
+      const response = await api.get<{ success: boolean; data: Menu }>(`/menus/public/restaurant/${restaurantIdOrSlug}`);
+      return response.data.data;
+    } catch (error) {
+      // If restaurant ID fails, try as slug
+      console.log('MenuService: Restaurant ID failed, trying as slug:', error);
+      const response = await api.get<{ success: boolean; data: Menu }>(`/menus/public/${restaurantIdOrSlug}`);
+      return response.data.data;
+    }
   }
 }
 

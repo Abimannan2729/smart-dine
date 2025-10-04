@@ -39,6 +39,11 @@ import { formatPrice, getCurrencySymbol } from '../../utils/currency';
 const PublicMenu: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   console.log('PublicMenu component initialized with slug:', slug);
+  
+  // Add immediate debugging
+  console.log('PublicMenu: Component is rendering');
+  console.log('PublicMenu: Current URL:', window.location.href);
+  console.log('PublicMenu: Slug from params:', slug);
   const [menu, setMenu] = useState<Menu | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -169,11 +174,16 @@ const PublicMenu: React.FC = () => {
       .map(item => ({ ...item, categoryName: category.name }))
   ) || [];
 
+  // Add immediate debug output
+  console.log('PublicMenu: Render state - loading:', loading, 'error:', error, 'menu:', !!menu);
+
   if (loading) {
+    console.log('PublicMenu: Showing loading spinner');
     return <LoadingSpinner />;
   }
 
   if (error || !menu) {
+    console.log('PublicMenu: Showing error state - error:', error, 'menu:', menu);
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center max-w-md">
@@ -192,6 +202,8 @@ const PublicMenu: React.FC = () => {
       </div>
     );
   }
+
+  console.log('PublicMenu: Rendering menu with data:', menu);
 
   return (
     <div className="min-h-screen bg-white">
