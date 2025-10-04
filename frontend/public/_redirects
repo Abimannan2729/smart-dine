@@ -1,1 +1,6 @@
+# Handle static assets with proper MIME types
+/static/js/*    /static/js/:splat    200
+/static/css/*   /static/css/:splat   200
+/static/media/* /static/media/:splat 200
+# Handle all other routes
 /*    /index.html   200
