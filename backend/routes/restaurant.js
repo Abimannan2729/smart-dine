@@ -23,7 +23,9 @@ router.get('/', protect, async (req, res) => {
     res.status(200).json({
       success: true,
       count: restaurants.length,
-      data: restaurants
+      data: {
+        restaurants
+      }
     });
   } catch (error) {
     console.error('Get restaurants error:', error);

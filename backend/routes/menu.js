@@ -541,6 +541,16 @@ router.delete('/items/:id', protect, async (req, res) => {
 
 // ===== PUBLIC ROUTES =====
 
+// @desc    Test route
+// @route   GET /api/menus/test
+// @access  Public
+router.get('/test', async (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Menu routes are working'
+  });
+});
+
 // @desc    Get demo menu (static data)
 // @route   GET /api/menus/public/demo
 // @access  Public

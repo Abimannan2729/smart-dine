@@ -165,7 +165,7 @@ async function testEndpoints() {
     if (!response.data.success) {
       throw new Error('Get restaurants was not successful');
     }
-    if (!Array.isArray(response.data.data)) {
+    if (!response.data.data || !Array.isArray(response.data.data.restaurants)) {
       throw new Error('Restaurants data is not an array');
     }
   });
