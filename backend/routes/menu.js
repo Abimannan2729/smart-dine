@@ -545,6 +545,7 @@ router.delete('/items/:id', protect, async (req, res) => {
 // @route   GET /api/menus/public/demo
 // @access  Public
 router.get('/public/demo', async (req, res) => {
+  console.log('Demo menu route hit:', req.url, req.method);
   try {
     // Return static demo menu data
     const demoMenu = {
@@ -804,6 +805,7 @@ router.get('/public/restaurant/:restaurantIdOrSlug', optionalAuth, async (req, r
 // @route   GET /api/menus/public/:slug
 // @access  Public
 router.get('/public/:slug', optionalAuth, async (req, res) => {
+  console.log('Public menu slug route hit:', req.url, req.method, 'slug:', req.params.slug);
   try {
     const restaurant = await Restaurant.findOne({ 
       slug: req.params.slug,
