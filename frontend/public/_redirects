@@ -1,1 +1,4 @@
+# Handle static assets
+/static/*    /static/:splat    200
+# Handle all other routes - SPA fallback
 /*    /index.html   200

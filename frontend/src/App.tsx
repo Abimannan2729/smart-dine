@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { RestaurantProvider } from './context/RestaurantContext';
@@ -14,6 +14,7 @@ const Register = React.lazy(() => import('./components/auth/Register'));
 const Dashboard = React.lazy(() => import('./components/dashboard/Dashboard'));
 const MenuDashboard = React.lazy(() => import('./components/menu/MenuDashboard'));
 const PublicMenu = React.lazy(() => import('./components/public/PublicMenu'));
+const SimplePublicMenu = React.lazy(() => import('./components/public/SimplePublicMenu'));
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -99,8 +100,11 @@ function AppContent() {
           />
           
           
+          {/* Test Route */}
+          <Route path="/test" element={<div className="p-8"><h1 className="text-2xl font-bold">Test Route Working!</h1></div>} />
+          
           {/* Public Menu Routes */}
-          <Route path="/menu/:slug" element={<PublicMenu />} />
+          <Route path="/menu/:slug" element={<SimplePublicMenu />} />
           
           {/* Protected Routes */}
           <Route 
@@ -120,8 +124,8 @@ function AppContent() {
             } 
           />
           
-          {/* Default redirects */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Default redirects - only catch truly unmatched routes */}
+          <Route path="*" element={<div className="p-8"><h1 className="text-2xl font-bold text-red-600">404 - Page Not Found</h1><p>Route: {window.location.pathname}</p></div>} />
         </Routes>
       </React.Suspense>
       
