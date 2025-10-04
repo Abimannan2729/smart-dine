@@ -3,8 +3,16 @@ import { LoginCredentials, RegisterData, User, ApiResponse } from '../types';
 
 export const authService = {
   // Register new user
-  register: async (data: RegisterData): Promise<ApiResponse<{ user: User; token: string }>> => {
+  register: async (data: RegisterData): Promise<ApiResponse<{ user: User }> & { token?: string }> => {
     const response = await api.post('/auth/register', data);
+    console.log('AuthService: Raw register response:', {
+      status: response.status,
+      statusText: response.statusText,
+      data: response.data,
+      hasToken: !!response.data?.token,
+      tokenValue: response.data?.token,
+      tokenType: typeof response.data?.token
+    });
     return response.data;
   },
 

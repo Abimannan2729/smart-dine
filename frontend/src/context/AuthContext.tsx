@@ -210,15 +210,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Register function
   const register = async (data: RegisterData): Promise<void> => {
     try {
+      console.log('AuthContext: Starting registration process');
       dispatch({ type: 'LOGIN_START' });
       
       const response = await authService.register(data);
+      console.log('AuthContext: Register response received:', {
+        success: response.success,
+        hasData: !!response.data,
+        responseKeys: response.data ? Object.keys(response.data) : [],
+        hasTokenAtRoot: !!(response as any).token,
+        tokenType: typeof (response as any).token,
+        user: response.data?.user ? { id: response.data.user._id, email: response.data.user.email } : null
+      });
       
-      if (response.success && response.data) {
-        const { user, token } = response.data;
+      if (response.success) {
+        // Backend sends: { success: true, token: "...", data: { user: {...} } }
+        const token = (response as any).token;
+        const user = response.data?.user;
         
-        // Store auth data
+        console.log('AuthContext: Registration successful for user:', user?.email);
+        console.log('AuthContext: Extracted token details:', {
+          hasToken: !!token,
+          tokenType: typeof token,
+          tokenValue: token,
+          tokenLength: token ? token.length : 0,
+          hasUser: !!user
+        });
+        
+        // Validate token and user before storing
+        if (!token || typeof token !== 'string' || token === 'undefined') {
+          console.error('AuthContext: Invalid token received:', token);
+          throw new Error('Invalid token received from server');
+        }
+        
+        if (!user) {
+          console.error('AuthContext: Invalid user received:', user);
+          throw new Error('Invalid user received from server');
+        }
+        
+        // Store auth data synchronously
         authService.setAuthData(user, token);
+        
+        // Verify token was stored
+        const storedToken = localStorage.getItem('token');
+        console.log('AuthContext: Auth data stored in localStorage', {
+          tokenStored: !!storedToken,
+          userStored: !!localStorage.getItem('user'),
+          tokenMatch: storedToken === token
+        });
         
         // Update state
         dispatch({
@@ -231,6 +270,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error(response.message || 'Registration failed');
       }
     } catch (error: any) {
+      console.error('Registration error:', error);
       const errorMessage = error.response?.data?.message || error.message || 'Registration failed';
       
       dispatch({ 
