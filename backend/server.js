@@ -7,6 +7,20 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 require('dotenv').config();
 
+// Ensure JWT_SECRET is set
+if (!process.env.JWT_SECRET) {
+  console.error('JWT_SECRET is not defined in environment variables');
+  process.env.JWT_SECRET = 'fallback-secret-key-for-development-only';
+  console.warn('Using fallback JWT_SECRET - this should only be used in development');
+}
+
+// Ensure Cloudinary credentials are set
+if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+  console.warn('Cloudinary credentials not set. Image uploads will use local storage.');
+} else {
+  console.log('Cloudinary configured successfully');
+}
+
 // Import routes
 const authRoutes = require('./routes/auth');
 const menuRoutes = require('./routes/menu');
@@ -140,7 +154,10 @@ app.get('/api/health', (req, res) => {
     status: 'OK',
     message: 'Smart Dine API is running',
     timestamp: new Date().toISOString(),
-    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+    jwtSecret: process.env.JWT_SECRET ? 'Set' : 'Not Set',
+    cloudinary: (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) ? 'Configured' : 'Not Configured',
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 

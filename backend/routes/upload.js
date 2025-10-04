@@ -1,6 +1,6 @@
 const express = require('express');
 const { protect } = require('../middleware/auth');
-const { uploadSingle, getFileUrl } = require('../middleware/upload');
+const { uploadSingle, getFileUrl } = require('../middleware/cloudinary');
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ router.post('/image', protect, uploadSingle('image'), async (req, res) => {
     }
 
     // Get the full URL for the uploaded file
-    const imageUrl = getFileUrl(req, req.file.path);
+    const imageUrl = req.file.path; // Cloudinary returns the full URL in path
 
     res.status(200).json({
       success: true,

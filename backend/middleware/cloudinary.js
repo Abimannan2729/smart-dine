@@ -1,42 +1,12 @@
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
-// Ensure upload directories exist
-const ensureDirectoryExists = (dirPath) => {
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true });
-  }
-};
-
-// Configure multer storage
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    let uploadPath = 'uploads/';
-    
-    // Organize uploads by type
-    if (file.fieldname.includes('logo') || file.fieldname.includes('avatar')) {
-      uploadPath += 'logos/';
-    } else if (file.fieldname.includes('cover') || file.fieldname.includes('banner')) {
-      uploadPath += 'covers/';
-    } else if (file.fieldname.includes('menu') || file.fieldname.includes('item')) {
-      uploadPath += 'menu-items/';
-    } else if (file.fieldname.includes('category')) {
-      uploadPath += 'categories/';
-    } else {
-      uploadPath += 'misc/';
-    }
-
-    ensureDirectoryExists(uploadPath);
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    // Generate unique filename
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
-    const name = file.fieldname + '-' + uniqueSuffix + ext;
-    cb(null, name);
-  }
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 // File filter function
@@ -55,11 +25,24 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Configure multer
+// Configure Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'smart-dine',
+    allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+    transformation: [
+      { width: 1200, height: 800, crop: 'limit', quality: 'auto' },
+      { fetch_format: 'auto' }
+    ]
+  }
+});
+
+// Configure multer with Cloudinary storage
 const upload = multer({
   storage: storage,
   limits: {
-    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024, // 5MB default
+    fileSize: parseInt(process.env.MAX_FILE_SIZE) || 10 * 1024 * 1024, // 10MB default
     files: 10 // Max 10 files per request
   },
   fileFilter: fileFilter
@@ -75,7 +58,7 @@ exports.uploadSingle = (fieldName) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            message: 'File too large. Maximum size allowed is 5MB.'
+            message: 'File too large. Maximum size allowed is 10MB.'
           });
         }
         if (err.code === 'LIMIT_FILE_COUNT') {
@@ -109,7 +92,7 @@ exports.uploadMultiple = (fieldName, maxCount = 10) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            message: 'File too large. Maximum size allowed is 5MB.'
+            message: 'File too large. Maximum size allowed is 10MB.'
           });
         }
         if (err.code === 'LIMIT_FILE_COUNT') {
@@ -143,7 +126,7 @@ exports.uploadFields = (fields) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
-            message: 'File too large. Maximum size allowed is 5MB.'
+            message: 'File too large. Maximum size allowed is 10MB.'
           });
         }
         if (err.code === 'LIMIT_FILE_COUNT') {
@@ -167,25 +150,47 @@ exports.uploadFields = (fields) => {
   };
 };
 
-// Helper function to delete file
-exports.deleteFile = (filePath) => {
+// Helper function to delete file from Cloudinary
+exports.deleteFile = async (publicId) => {
   try {
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-      return true;
+    if (publicId) {
+      const result = await cloudinary.uploader.destroy(publicId);
+      return result.result === 'ok';
     }
     return false;
   } catch (error) {
-    console.error('Error deleting file:', error);
+    console.error('Error deleting file from Cloudinary:', error);
     return false;
   }
 };
 
-// Helper function to get file URL
-exports.getFileUrl = (req, filePath) => {
-  if (!filePath) return null;
+// Helper function to get file URL from Cloudinary
+exports.getFileUrl = (publicId, options = {}) => {
+  if (!publicId) return null;
   
-  const protocol = req.protocol;
-  const host = req.get('host');
-  return `${protocol}://${host}/${filePath.replace(/\\/g, '/')}`;
+  const defaultOptions = {
+    secure: true,
+    quality: 'auto',
+    fetch_format: 'auto'
+  };
+  
+  return cloudinary.url(publicId, { ...defaultOptions, ...options });
+};
+
+// Helper function to extract public ID from Cloudinary URL
+exports.extractPublicId = (url) => {
+  if (!url) return null;
+  
+  // Extract public ID from Cloudinary URL
+  const match = url.match(/\/v\d+\/(.+)\.(jpg|jpeg|png|webp)/);
+  return match ? match[1] : null;
+};
+
+module.exports = {
+  uploadSingle: exports.uploadSingle,
+  uploadMultiple: exports.uploadMultiple,
+  uploadFields: exports.uploadFields,
+  deleteFile: exports.deleteFile,
+  getFileUrl: exports.getFileUrl,
+  extractPublicId: exports.extractPublicId
 };

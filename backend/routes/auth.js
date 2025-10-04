@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('crypto');
 const { protect, createSendToken } = require('../middleware/auth');
-const { uploadSingle } = require('../middleware/upload');
+const { uploadSingle } = require('../middleware/cloudinary');
 const User = require('../models/User');
 
 const router = express.Router();

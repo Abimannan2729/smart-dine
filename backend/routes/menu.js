@@ -1,6 +1,6 @@
 const express = require('express');
 const { protect, checkRestaurantOwnership, optionalAuth } = require('../middleware/auth');
-const { uploadMultiple, uploadSingle } = require('../middleware/upload');
+const { uploadMultiple, uploadSingle } = require('../middleware/cloudinary');
 const Restaurant = require('../models/Restaurant');
 const Category = require('../models/Category');
 const MenuItem = require('../models/MenuItem');
@@ -540,6 +540,164 @@ router.delete('/items/:id', protect, async (req, res) => {
 });
 
 // ===== PUBLIC ROUTES =====
+
+// @desc    Get demo menu (static data)
+// @route   GET /api/menus/public/demo
+// @access  Public
+router.get('/public/demo', async (req, res) => {
+  try {
+    // Return static demo menu data
+    const demoMenu = {
+      _id: 'demo-menu-id',
+      name: 'Golden Fork Menu',
+      description: 'Experience our curated selection of fine dining favorites',
+      isActive: true,
+      restaurant: {
+        _id: 'demo-restaurant-id',
+        name: 'The Golden Fork',
+        description: 'Fine dining experience with modern cuisine and exceptional service',
+        logo: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=200&h=200&fit=crop&crop=face',
+        coverImage: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&h=400&fit=crop',
+        theme: {
+          primaryColor: '#dc2626',
+          secondaryColor: '#f97316',
+          fontFamily: 'Inter',
+          layout: 'modern'
+        },
+        address: {
+          street: '123 Culinary Street',
+          city: 'San Francisco',
+          state: 'CA',
+          zipCode: '94102',
+          country: 'USA'
+        },
+        contact: {
+          phone: '+1 (555) 123-4567',
+          email: 'hello@goldenfork.com',
+          website: 'www.goldenfork.com'
+        },
+        operatingHours: {
+          monday: { open: '11:00', close: '22:00', isOpen: true },
+          tuesday: { open: '11:00', close: '22:00', isOpen: true },
+          wednesday: { open: '11:00', close: '22:00', isOpen: true },
+          thursday: { open: '11:00', close: '22:00', isOpen: true },
+          friday: { open: '11:00', close: '23:00', isOpen: true },
+          saturday: { open: '10:00', close: '23:00', isOpen: true },
+          sunday: { open: '10:00', close: '21:00', isOpen: true }
+        },
+        cuisine: ['Italian', 'Mediterranean', 'Modern']
+      },
+      categories: [
+        {
+          _id: 'appetizers',
+          name: 'Appetizers',
+          description: 'Start your dining experience with our carefully crafted starters',
+          image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=200&fit=crop',
+          isActive: true,
+          sortOrder: 1,
+          items: [
+            {
+              _id: 'item-1',
+              name: 'Truffle Arancini',
+              description: 'Crispy risotto balls filled with truffle cheese, served with garlic aioli',
+              price: 1200,
+              category: 'appetizers',
+              image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop',
+              isAvailable: true,
+              dietaryTags: [{ id: 'vegetarian', name: 'Vegetarian', color: '#22c55e' }],
+              preparationTime: 15,
+              calories: 320,
+              isPopular: true,
+              ingredients: ['Arborio rice', 'Truffle cheese', 'Panko breadcrumbs', 'Garlic', 'Aioli'],
+              allergens: ['Dairy', 'Gluten'],
+              sortOrder: 1
+            },
+            {
+              _id: 'item-2',
+              name: 'Pan-Seared Scallops',
+              description: 'Fresh sea scallops with cauliflower purée and pancetta crisps',
+              price: 1800,
+              category: 'appetizers',
+              image: 'https://images.unsplash.com/photo-1559847844-d445cb8d6810?w=300&h=200&fit=crop',
+              isAvailable: true,
+              dietaryTags: [{ id: 'gluten-free', name: 'Gluten Free', color: '#3b82f6' }],
+              preparationTime: 20,
+              calories: 280,
+              isFeatured: true,
+              ingredients: ['Sea scallops', 'Cauliflower', 'Pancetta', 'Butter', 'Herbs'],
+              allergens: ['Shellfish', 'Dairy'],
+              sortOrder: 2
+            }
+          ]
+        },
+        {
+          _id: 'mains',
+          name: 'Main Courses',
+          description: 'Our signature dishes and chef\'s specialties',
+          image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400&h=200&fit=crop',
+          isActive: true,
+          sortOrder: 2,
+          items: [
+            {
+              _id: 'item-4',
+              name: 'Wagyu Beef Ribeye',
+              description: 'Premium A5 Wagyu ribeye with roasted vegetables and red wine jus',
+              price: 6500,
+              originalPrice: 7000,
+              category: 'mains',
+              image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=300&h=200&fit=crop',
+              isAvailable: true,
+              dietaryTags: [{ id: 'gluten-free', name: 'Gluten Free', color: '#3b82f6' }],
+              preparationTime: 25,
+              calories: 650,
+              isPopular: true,
+              isFeatured: true,
+              ingredients: ['Wagyu ribeye', 'Seasonal vegetables', 'Red wine', 'Herbs'],
+              allergens: [],
+              sortOrder: 1
+            }
+          ]
+        }
+      ],
+      settings: {
+        currency: 'INR',
+        showPrices: true,
+        showImages: true,
+        showDescriptions: true,
+        showDietaryTags: true,
+        showIngredients: true,
+        showCalories: true,
+        showPreparationTime: true,
+        showSpicyLevel: false,
+        allowCustomization: true,
+        showAvailability: true,
+        theme: {
+          primaryColor: '#dc2626',
+          secondaryColor: '#f97316',
+          fontFamily: 'Inter',
+          layout: 'grid'
+        }
+      },
+      stats: {
+        totalViews: 2547,
+        totalOrders: 189,
+        popularItems: ['item-1', 'item-4', 'item-7'],
+        averageViewTime: 245
+      }
+    };
+
+    res.status(200).json({
+      success: true,
+      data: demoMenu
+    });
+  } catch (error) {
+    console.error('Get demo menu error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching demo menu'
+    });
+  }
+});
 
 // @desc    Get public menu by restaurant ID or slug
 // @route   GET /api/menus/public/restaurant/:restaurantIdOrSlug
