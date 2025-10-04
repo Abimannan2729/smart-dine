@@ -161,12 +161,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Test route to verify server is working
+app.get('/api/test', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Server is working',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
+console.log('Registering routes...');
 app.use('/api/auth', authRoutes);
+console.log('Auth routes registered');
 app.use('/api/restaurants', restaurantRoutes);
+console.log('Restaurant routes registered');
 app.use('/api/menus', menuRoutes);
+console.log('Menu routes registered');
 app.use('/api/qr', qrRoutes);
+console.log('QR routes registered');
 app.use('/api/upload', uploadRoutes);
+console.log('Upload routes registered');
 
 // 404 handler for unmatched routes
 app.use((req, res, next) => {
