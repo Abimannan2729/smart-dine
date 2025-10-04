@@ -66,12 +66,20 @@ const PublicMenu: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      // Handle demo case with static data
+      // Handle demo case - try backend first, fallback to static data
       if (slugOrId === 'demo') {
         console.log('PublicMenu: Loading demo menu data for slug:', slugOrId);
-        setMenu(demoMenu);
-        setLoading(false);
-        return;
+        try {
+          const menuData = await menuService.getPublicMenu('demo');
+          setMenu(menuData);
+          setLoading(false);
+          return;
+        } catch (error) {
+          console.log('PublicMenu: Backend demo failed, using static data');
+          setMenu(demoMenu);
+          setLoading(false);
+          return;
+        }
       }
       
       console.log('PublicMenu: Loading menu data for restaurant:', slugOrId);

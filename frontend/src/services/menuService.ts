@@ -289,6 +289,10 @@ class MenuService {
 
   // Public menu access (no auth required)
   async getPublicMenu(restaurantId: string): Promise<Menu> {
+    if (restaurantId === 'demo') {
+      const response = await api.get<{ success: boolean; data: Menu }>(`/menus/public/demo`);
+      return response.data.data;
+    }
     const response = await api.get<{ success: boolean; data: Menu }>(`/menus/public/restaurant/${restaurantId}`);
     return response.data.data;
   }
