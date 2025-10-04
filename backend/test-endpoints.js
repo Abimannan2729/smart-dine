@@ -2,7 +2,7 @@ const axios = require('axios');
 
 // Test configuration
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
-const TEST_EMAIL = 'test@example.com';
+const TEST_EMAIL = `test-${Date.now()}@example.com`;
 const TEST_PASSWORD = 'testpassword123';
 
 async function testEndpoints() {
@@ -176,20 +176,22 @@ async function testEndpoints() {
       throw new Error('No restaurant ID available');
     }
     
-    const response = await axios.get(`${API_BASE_URL}/menus/public/restaurant/${restaurantId}`);
-    
-    // This might return 404 if no menu is published, which is expected
-    if (response.status === 404) {
-      console.log('   Note: Restaurant has no published menu (expected for new restaurant)');
-      return;
+    try {
+      const response = await axios.get(`${API_BASE_URL}/menus/public/restaurant/${restaurantId}`);
+      
+      if (response.status === 200 && response.data.success) {
+        console.log('   Note: Restaurant has published menu');
+        return;
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        console.log('   Note: Restaurant has no published menu (expected for new restaurant)');
+        return;
+      }
+      throw error;
     }
     
-    if (response.status !== 200) {
-      throw new Error(`Expected status 200 or 404, got ${response.status}`);
-    }
-    if (!response.data.success) {
-      throw new Error('Public menu request was not successful');
-    }
+    throw new Error('Unexpected response from public menu route');
   });
 
   // Test 8: Demo Menu Route
