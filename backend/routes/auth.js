@@ -58,15 +58,13 @@ router.post('/register', async (req, res) => {
     }
 
     // TODO: Send verification email
-    // For now, we'll auto-verify for development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🚪 REGISTER: Auto-verifying user in development...');
-      user.isEmailVerified = true;
-      user.emailVerificationToken = undefined;
-      user.emailVerificationExpires = undefined;
-      await user.save({ validateBeforeSave: false });
-      console.log('✅ REGISTER: User auto-verified');
-    }
+    // For now, we'll auto-verify for testing purposes
+    console.log('🚪 REGISTER: Auto-verifying user for testing...');
+    user.isEmailVerified = true;
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    console.log('✅ REGISTER: User auto-verified');
 
     console.log('🏆 REGISTER: Creating and sending JWT token...');
     createSendToken(user, 201, res);

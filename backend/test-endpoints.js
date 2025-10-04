@@ -2,7 +2,7 @@ const axios = require('axios');
 
 // Test configuration
 const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5000/api';
-const TEST_EMAIL = `test-${Date.now()}@example.com`;
+const TEST_EMAIL = 'test@example.com';
 const TEST_PASSWORD = 'testpassword123';
 
 async function testEndpoints() {
